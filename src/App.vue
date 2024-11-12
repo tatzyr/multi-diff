@@ -11,44 +11,42 @@ const fields = ref([
   { value: 'foo, quux, foobar, xyzzy' },
 ]);
 
-const changeObjects = computed(() => {
-  return fields.value.map((field) => {
+const changeObjects = computed(() =>
+  fields.value.map((field) => {
     const diffs = dmp.diff_main(baseText.value, field.value);
     dmp.diff_cleanupSemantic(diffs);
     return diffs;
-  });
-});
+  })
+);
 
 </script>
 
 <template>
-  <main>
-    <h1>multi-diff</h1>
+  <h1>multi-diff</h1>
 
-    <div class="forms">
-      <div class="form-and-text">
-        <textarea v-model="baseText" class="text-input"></textarea>
-        <div class="result">{{ baseText }}</div>
-      </div>
-      <hr>
-
-      <transition-group name="list">
-        <template v-for="(field, i) in fields" :key="i">
-          <div class="form-and-text">
-            <textarea v-model="field.value" class="text-input"></textarea>
-            <div class="result">
-              <span v-for="(diff, j) in changeObjects[i]" :key="j" :class="diff[0] === 1 ? 'added' : diff[0] === -1 ? 'removed' : ''">
-                {{ diff[1] }}
-              </span>
-            </div>
-          </div>
-          <hr>
-        </template>
-      </transition-group>
-
-      <button @click="fields.push({ value: '' })">Add inputs</button>
+  <div class="forms">
+    <div class="form-and-text">
+      <textarea v-model="baseText" class="text-input"></textarea>
+      <div class="result">{{ baseText }}</div>
     </div>
-  </main>
+    <hr>
+
+    <transition-group name="list">
+      <template v-for="(field, i) in fields" :key="i">
+        <div class="form-and-text">
+          <textarea v-model="field.value" class="text-input"></textarea>
+          <div class="result">
+            <span v-for="(diff, j) in changeObjects[i]" :key="j" :class="diff[0] === 1 ? 'added' : diff[0] === -1 ? 'removed' : ''">
+              {{ diff[1] }}
+            </span>
+          </div>
+        </div>
+        <hr>
+      </template>
+    </transition-group>
+
+    <button @click="fields.push({ value: '' })">Add inputs</button>
+  </div>
 </template>
 
 <style scoped>
